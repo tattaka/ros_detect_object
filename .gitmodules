@@ -1,0 +1,4 @@
+[submodule "scripts/YOLOv2"]
+	path = scripts/YOLOv2
+	url = https://github.com/tattaka/YOLOv2.git
+	branch = use_gpu
