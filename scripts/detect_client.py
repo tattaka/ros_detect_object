@@ -65,6 +65,7 @@ if __name__ == "__main__":
                     region.y_offset + region.height - 1,
                     region.x_offset + region.width - 1
                 ])
+
             bboxes = np.array(bboxes)
             labels = np.array(res.labels)
             scores = np.array(res.scores)
@@ -82,8 +83,34 @@ if __name__ == "__main__":
             #
             #
             np_img = np.array([img[:,:,2],img[:,:,1],img[:,:,0]])
-            chainercv.visualizations.vis_bbox(
-                np_img, bboxes, labels, scores, label_names=label_names)
+            for n, region in enumerate(res.regions):
+                x0 = region.x_offset
+                y0 = region.y_offset
+                x1 = region.x_offset + region.width - 1
+                y1 = region.y_offset + region.height - 1
+                cv2.rectangle(img, (x0, y0), (x1, y1), (0, 0, 255), 2)
+                label_str = '%.2f: %s' % (res.scores[n], res.names[n])
+                text_config = {
+                    'text': label_str,
+                    'fontFace': cv2.FONT_HERSHEY_PLAIN,
+                    'fontScale': 1,
+                    'thickness': 1,
+                }
+                size, baseline = cv2.getTextSize(**text_config)
+                cv2.rectangle(
+                    img, (x0, y0), (x0 + size[0], y0 + size[1]),
+                    (255, 255, 255), cv2.FILLED
+                )
+                cv2.putText(
+                    img,
+                    org = (x0, y0 + size[1]),
+                    color = (255, 0, 0),
+                    **text_config
+                )
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            matplotlib.pyplot.imshow(img)
+            #np_img = np.array([img[:,:,2],img[:,:,1],img[:,:,0]])
+            ##chainercv.visualizations.vis_bbox(np_img, bboxes, labels, scores, label_names=label_names)
+
     if args.display:
         matplotlib.pyplot.show()
-
